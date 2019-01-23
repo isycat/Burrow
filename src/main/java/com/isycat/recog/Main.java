@@ -1,7 +1,5 @@
 package com.isycat.recog;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.rekognition.AmazonRekognitionAsync;
 import com.amazonaws.services.rekognition.AmazonRekognitionAsyncClientBuilder;
@@ -17,10 +15,7 @@ public class Main {
     private static final AmazonRekognitionAsync REKOG = AmazonRekognitionAsyncClientBuilder
             .standard()
             .withRegion(Regions.EU_WEST_1)
-            .withCredentials(new AWSStaticCredentialsProvider(
-                    new BasicAWSCredentials(
-                            "no",
-                            "no")))
+            .withCredentials(new CredProvider())
             .build();
 
     public static void main(final String... args) throws Exception {
