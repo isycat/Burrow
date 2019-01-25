@@ -42,9 +42,9 @@ public abstract class ServletRouter extends HttpServlet {
     public final void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final String requestId = UUID.randomUUID().toString().replace("-", "");
         // todo: proper logging
-        final ServletActivity activity = getActivity(request.getServletPath());
+        final ServletActivity activity = getActivity(request.getRequestURI());
         System.out.println(activity == ServletActivity.NONE
-                ? "[" + requestId + "]" + " No operation handler"
+                ? "[" + requestId + "]" + " No operation handler for path " + request.getRequestURI()
                 : "[" + requestId + "]" + " Operation handler: " + activity.getClass().getName());
         activity.handleRequest(request, response, requestId);
         response.addHeader(Headers.REQUEST_ID, requestId);
