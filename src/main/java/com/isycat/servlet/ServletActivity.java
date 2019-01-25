@@ -9,9 +9,9 @@ public abstract class ServletActivity {
         @Override
         public void handleRequest(final HttpServletRequest request,
                                   final HttpServletResponse response,
-                                  final String requestId) {
-            System.out.println("No handler for request! " + requestId);
+                                  final String requestId) throws IOException {
             response.setStatus(500);
+            response.getWriter().println("An internal error has occurred");
         }
     };
 
