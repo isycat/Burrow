@@ -10,8 +10,8 @@ public abstract class ServletActivity {
         public void handleRequest(final HttpServletRequest request,
                                   final HttpServletResponse response,
                                   final String requestId) throws IOException {
-            response.setStatus(500);
-            response.getWriter().println("An internal error has occurred");
+            response.setStatus(404);
+            response.getWriter().println("Unknown Operation");
         }
     };
 
