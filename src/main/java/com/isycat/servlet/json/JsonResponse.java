@@ -1,7 +1,7 @@
 package com.isycat.servlet.json;
 
 import com.google.gson.Gson;
-import com.isycat.servlet.ServletRouter;
+import com.isycat.servlet.HttpConstants;
 
 import java.util.LinkedHashMap;
 
@@ -9,11 +9,11 @@ public class JsonResponse extends LinkedHashMap<String, Object> {
     private static Gson GSON = new Gson();
 
     public JsonResponse() {
-        this.with(ServletRouter.Fields.STATUS, 200);
+        this.with(HttpConstants.Fields.STATUS, 200);
     }
 
     public JsonResponse(final int status) {
-        this.with(ServletRouter.Fields.STATUS, status);
+        this.with(HttpConstants.Fields.STATUS, status);
     }
 
 

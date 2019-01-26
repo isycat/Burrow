@@ -2,6 +2,7 @@ package com.isycat.recog;
 
 import com.isycat.recog.activity.GetCameraImageActivity;
 import com.isycat.recog.activity.ListCamerasActivity;
+import com.isycat.servlet.ActivityRoute;
 import com.isycat.servlet.ServletRouter;
 
 public class RekogRouter extends ServletRouter {

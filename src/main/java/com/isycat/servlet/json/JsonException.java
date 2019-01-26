@@ -1,6 +1,6 @@
 package com.isycat.servlet.json;
 
-import com.isycat.servlet.ServletRouter.Fields;
+import com.isycat.servlet.HttpConstants;
 
 public class JsonException extends JsonResponse{
 
@@ -12,7 +12,7 @@ public class JsonException extends JsonResponse{
      */
     public JsonException(final String message) {
         super(500);
-        this.with(Fields.MESSAGE, message);
+        this.with(HttpConstants.Fields.MESSAGE, message);
     }
 
     /**
@@ -23,7 +23,7 @@ public class JsonException extends JsonResponse{
      */
     public JsonException(final int status, final String message) {
         super(status);
-        this.with(Fields.MESSAGE, message);
+        this.with(HttpConstants.Fields.MESSAGE, message);
     }
 
     /**
