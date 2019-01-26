@@ -1,4 +1,4 @@
-package com.isycat.servlet;
+package com.isycat.servlet.activity;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -14,11 +14,11 @@ public class ActivityRoute {
     private static final String REGEX_NAMED_GROUP = "\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>";
 
     private final String pathMatcher;
-    private final Supplier<ServletActivity> activitySupplier;
+    private final Supplier<AbstractServletActivity> activitySupplier;
     private final Set<String> groups;
 
     public ActivityRoute(final String pathMatcher,
-                         final Supplier<ServletActivity> activitySupplier) {
+                         final Supplier<AbstractServletActivity> activitySupplier) {
         this.pathMatcher = pathMatcher.replaceAll(REGEX_BRACKET_GROUP, NAMED_REGEX_GROUP_REPLACEMENT);
         this.activitySupplier = activitySupplier;
         groups = new HashSet<>();
@@ -61,9 +61,9 @@ public class ActivityRoute {
     }
 
     /**
-     * @return the {@link ServletActivity} handled by this route
+     * @return the {@link AbstractServletActivity} handled by this route
      */
-    public ServletActivity getNewActivity() {
+    public AbstractServletActivity getNewActivity() {
         return activitySupplier.get();
     }
 }

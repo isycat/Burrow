@@ -1,6 +1,6 @@
 package com.isycat.recog.activity;
 
-import com.isycat.servlet.ImageActivity;
+import com.isycat.servlet.activity.ImageActivity;
 import com.isycat.servlet.json.JsonRequest;
 
 import javax.imageio.ImageIO;

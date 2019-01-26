@@ -1,6 +1,5 @@
-package com.isycat.servlet;
+package com.isycat.servlet.activity;
 
-import com.isycat.servlet.json.JsonActivity;
 import com.isycat.servlet.json.JsonException;
 import com.isycat.servlet.json.JsonRequest;
 import com.isycat.servlet.json.JsonResponse;
@@ -13,8 +12,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ServletActivity<RequestType extends JsonRequest, ResponseType> {
-    public static ServletActivity NONE = new JsonActivity<JsonRequest, JsonResponse>() {
+public abstract class AbstractServletActivity<RequestType extends JsonRequest, ResponseType> {
+    public static AbstractServletActivity NONE = new JsonActivity<JsonRequest, JsonResponse>() {
         @Override
         public JsonResponse handle(final JsonRequest request) {
             return new JsonException(404, "Unknown Operation");

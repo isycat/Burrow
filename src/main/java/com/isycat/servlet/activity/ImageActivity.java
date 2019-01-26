@@ -1,4 +1,4 @@
-package com.isycat.servlet;
+package com.isycat.servlet.activity;
 
 import com.isycat.servlet.json.JsonRequest;
 
@@ -9,7 +9,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 
 public abstract class ImageActivity<RequestType extends JsonRequest>
-        extends ServletActivity<RequestType, RenderedImage> {
+        extends AbstractServletActivity<RequestType, RenderedImage> {
 
     private final String format;
 

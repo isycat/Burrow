@@ -2,6 +2,7 @@ package com.isycat.servlet;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.isycat.servlet.activity.ActivityRoute;
 import org.junit.Test;
 
 import java.util.Map;

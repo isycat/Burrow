@@ -1,8 +1,10 @@
-package com.isycat.servlet.json;
+package com.isycat.servlet.activity;
 
 import com.google.gson.JsonPrimitive;
 import com.isycat.servlet.HttpConstants;
-import com.isycat.servlet.ServletActivity;
+import com.isycat.servlet.json.JsonException;
+import com.isycat.servlet.json.JsonRequest;
+import com.isycat.servlet.json.JsonResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,7 +12,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public abstract class JsonActivity<RequestType extends JsonRequest, ResponseType extends JsonResponse>
-        extends ServletActivity<RequestType, ResponseType> {
+        extends AbstractServletActivity<RequestType, ResponseType> {
     private static final String APPLICATION_JSON_CONTENT_TYPE = "application/json";
     public static final JsonException SERVER_INTERNAL =
             new JsonException(500, "An internal error occurred.");

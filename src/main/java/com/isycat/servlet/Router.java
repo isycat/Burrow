@@ -1,6 +1,8 @@
 package com.isycat.servlet;
 
 import com.isycat.servlet.HttpConstants.Headers;
+import com.isycat.servlet.activity.ActivityRoute;
+import com.isycat.servlet.activity.AbstractServletActivity;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServlet;
@@ -9,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-import static com.isycat.servlet.json.JsonActivity.SERVER_INTERNAL;
+import static com.isycat.servlet.activity.JsonActivity.SERVER_INTERNAL;
 
-public abstract class ServletRouter extends HttpServlet {
+public abstract class Router extends HttpServlet {
     private final ActivityRoute[] activityRoutes;
 
     /**
@@ -19,7 +21,7 @@ public abstract class ServletRouter extends HttpServlet {
      *
      * @param activityRoutes priority ordered list of activitySupplier activityRoutes.
      */
-    public ServletRouter(final ActivityRoute... activityRoutes) {
+    public Router(final ActivityRoute... activityRoutes) {
         super();
         this.activityRoutes = activityRoutes;
     }
@@ -47,11 +49,11 @@ public abstract class ServletRouter extends HttpServlet {
             throws IllegalAccessException, IOException, InstantiationException {
         final String requestId = UUID.randomUUID().toString().replace("-", "");
         final Optional<ActivityRoute> activityRoute = getActivityRoute(request.getRequestURI());
-        final ServletActivity activity = activityRoute
+        final AbstractServletActivity activity = activityRoute
                 .map(ActivityRoute::getNewActivity)
-                .orElse(ServletActivity.NONE);
+                .orElse(AbstractServletActivity.NONE);
         // todo: proper logging
-        System.out.println(activity == ServletActivity.NONE
+        System.out.println(activity == AbstractServletActivity.NONE
                 ? "[" + requestId + "]" + " No operation handler for path " + request.getRequestURI()
                 : "[" + requestId + "]" + " Operation handler: " + activity.getClass().getName());
         final Map<String, String> pathFields = activityRoute

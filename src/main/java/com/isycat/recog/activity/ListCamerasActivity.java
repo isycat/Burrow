@@ -1,7 +1,7 @@
 package com.isycat.recog.activity;
 
 import com.google.common.collect.ImmutableList;
-import com.isycat.servlet.json.JsonActivity;
+import com.isycat.servlet.activity.JsonActivity;
 import com.isycat.servlet.json.JsonRequest;
 import com.isycat.servlet.json.JsonResponse;
 
