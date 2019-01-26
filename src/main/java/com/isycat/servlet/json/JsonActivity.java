@@ -4,7 +4,6 @@ import com.google.gson.JsonPrimitive;
 import com.isycat.servlet.ServletActivity;
 import com.isycat.servlet.ServletRouter.Fields;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -15,7 +14,7 @@ public abstract class JsonActivity extends ServletActivity {
             new JsonException(500, "An internal error occurred.");
 
     @Override
-    public final void handleRequest(final HttpServletRequest request,
+    public final void handleRequest(final JsonRequest request,
                                     final HttpServletResponse response,
                                     final String requestId) throws IOException {
         final JsonResponse jsonResponse = handleResponse(request)
@@ -25,7 +24,7 @@ public abstract class JsonActivity extends ServletActivity {
         response.getWriter().println(jsonResponse);
     }
 
-    private JsonResponse handleResponse(final HttpServletRequest request) {
+    private JsonResponse handleResponse(final JsonRequest request) {
         try {
             return this.handle(request);
         } catch (final Exception e) {
@@ -42,5 +41,5 @@ public abstract class JsonActivity extends ServletActivity {
      * @return JsonResponse object to be returned to user
      * @throws IOException usually on writing response
      */
-    public abstract JsonResponse handle(final HttpServletRequest request) throws IOException;
+    public abstract JsonResponse handle(final JsonRequest request) throws IOException;
 }

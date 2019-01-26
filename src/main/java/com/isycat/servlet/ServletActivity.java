@@ -1,13 +1,14 @@
 package com.isycat.servlet;
 
-import javax.servlet.http.HttpServletRequest;
+import com.isycat.servlet.json.JsonRequest;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public abstract class ServletActivity {
     public static ServletActivity NONE = new ServletActivity() {
         @Override
-        public void handleRequest(final HttpServletRequest request,
+        public void handleRequest(final JsonRequest request,
                                   final HttpServletResponse response,
                                   final String requestId) throws IOException {
             response.setStatus(404);
@@ -15,7 +16,7 @@ public abstract class ServletActivity {
         }
     };
 
-    public abstract void handleRequest(final HttpServletRequest request,
+    public abstract void handleRequest(final JsonRequest request,
                                        final HttpServletResponse response,
                                        final String requestId) throws IOException;
 }
