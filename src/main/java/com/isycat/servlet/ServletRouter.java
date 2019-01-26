@@ -29,12 +29,15 @@ public abstract class ServletRouter extends HttpServlet {
             handleRequest(request, response);
         } catch (final Exception e) {
             // todo: proper logging
+            System.out.println("Handling unchecked exception");
             e.printStackTrace();
             try {
+                response.setStatus(500);
                 response.getWriter().println(SERVER_INTERNAL);
             } catch (final Exception e2) {
                 // todo: proper logging
                 // if we get here things are seriously broken
+                System.out.println("End of the line.");
                 e2.printStackTrace();
             }
         }

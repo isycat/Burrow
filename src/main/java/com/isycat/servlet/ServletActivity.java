@@ -27,13 +27,18 @@ public abstract class ServletActivity<RequestType extends JsonRequest, ResponseT
                               final HttpServletResponse servletResponse)
             throws IOException, InstantiationException, IllegalAccessException {
         final RequestType typedRequest = processRequest(pathFields, servletRequest);
-        servletResponse.getWriter().println(
+        writeResponse(
                 this.getResponse(
                         requestId,
                         typedRequest,
                         servletRequest,
-                        servletResponse
-                ));
+                        servletResponse),
+                servletResponse);
+    }
+
+    protected void writeResponse(final Object response,
+                                 final HttpServletResponse servletResponse) throws IOException {
+        servletResponse.getWriter().println(response);
     }
 
     private RequestType processRequest(final Map<String, String> pathFields,
