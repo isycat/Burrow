@@ -1,11 +1,11 @@
-package com.isycat.recog.activity;
+package com.isycat.recog.operation;
 
 import com.google.common.collect.ImmutableList;
-import com.isycat.servlet.activity.JsonActivity;
+import com.isycat.servlet.operation.JsonOperation;
 import com.isycat.servlet.json.JsonRequest;
 import com.isycat.servlet.json.JsonResponse;
 
-public class ListCamerasActivity extends JsonActivity<JsonRequest, JsonResponse> {
+public class ListCamerasOperation extends JsonOperation<JsonRequest, JsonResponse> {
     @Override
     public JsonResponse handle(final JsonRequest request) {
         return new JsonResponse(200)

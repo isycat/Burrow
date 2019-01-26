@@ -1,8 +1,8 @@
 package com.isycat.servlet;
 
 import com.isycat.servlet.HttpConstants.Headers;
-import com.isycat.servlet.activity.ActivityRoute;
-import com.isycat.servlet.activity.AbstractServletActivity;
+import com.isycat.servlet.operation.AbstractServletOperationHandler;
+import com.isycat.servlet.operation.OperationRoute;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServlet;
@@ -11,19 +11,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-import static com.isycat.servlet.activity.JsonActivity.SERVER_INTERNAL;
+import static com.isycat.servlet.operation.JsonOperation.SERVER_INTERNAL;
 
 public abstract class Router extends HttpServlet {
-    private final ActivityRoute[] activityRoutes;
+    private final OperationRoute[] operationRoutes;
 
     /**
      * Constructor.
      *
-     * @param activityRoutes priority ordered list of activitySupplier activityRoutes.
+     * @param operationRoutes priority ordered array of path routes to operation handlers.
      */
-    public Router(final ActivityRoute... activityRoutes) {
+    public Router(final OperationRoute... operationRoutes) {
         super();
-        this.activityRoutes = activityRoutes;
+        this.operationRoutes = operationRoutes;
     }
 
     public final void doGet(final HttpServletRequest request, final HttpServletResponse response) {
@@ -48,27 +48,27 @@ public abstract class Router extends HttpServlet {
     private void handleRequest(final HttpServletRequest request, final HttpServletResponse response)
             throws IllegalAccessException, IOException, InstantiationException {
         final String requestId = UUID.randomUUID().toString().replace("-", "");
-        final Optional<ActivityRoute> activityRoute = getActivityRoute(request.getRequestURI());
-        final AbstractServletActivity activity = activityRoute
-                .map(ActivityRoute::getNewActivity)
-                .orElse(AbstractServletActivity.NONE);
+        final Optional<OperationRoute> operationRoute = getOperationRoute(request.getRequestURI());
+        final AbstractServletOperationHandler operationHandler = operationRoute
+                .map(OperationRoute::getNewOperationHandler)
+                .orElse(AbstractServletOperationHandler.NONE);
         // todo: proper logging
-        System.out.println(activity == AbstractServletActivity.NONE
+        System.out.println(operationHandler == AbstractServletOperationHandler.NONE
                 ? "[" + requestId + "]" + " No operation handler for path " + request.getRequestURI()
-                : "[" + requestId + "]" + " Operation handler: " + activity.getClass().getName());
-        final Map<String, String> pathFields = activityRoute
+                : "[" + requestId + "]" + " Operation handler: " + operationHandler.getClass().getName());
+        final Map<String, String> pathFields = operationRoute
                 .map(route -> route.getPathFields(request.getRequestURI()))
                 .orElse(Collections.emptyMap());
 
-        activity.handleRequest(requestId, pathFields, request, response);
+        operationHandler.handleRequest(requestId, pathFields, request, response);
 
         response.addHeader(Headers.REQUEST_ID, requestId);
         response.addDateHeader(Headers.DATE, new Date().getTime());
     }
 
-    private Optional<ActivityRoute> getActivityRoute(@Nullable final String path) {
-        return Arrays.stream(activityRoutes)
-                .filter(activityRoute -> activityRoute.matches(path))
+    private Optional<OperationRoute> getOperationRoute(@Nullable final String path) {
+        return Arrays.stream(operationRoutes)
+                .filter(operationRoute -> operationRoute.matches(path))
                 .findFirst();
     }
 }

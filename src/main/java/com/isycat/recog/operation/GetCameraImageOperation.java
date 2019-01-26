@@ -1,6 +1,6 @@
-package com.isycat.recog.activity;
+package com.isycat.recog.operation;
 
-import com.isycat.servlet.activity.ImageActivity;
+import com.isycat.servlet.operation.ImageOperation;
 import com.isycat.servlet.json.JsonRequest;
 
 import javax.imageio.ImageIO;
@@ -9,8 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
-public class GetCameraImageActivity extends ImageActivity<GetCameraImageActivity.GetCameraImageRequest> {
-    public GetCameraImageActivity() {
+public class GetCameraImageOperation extends ImageOperation<GetCameraImageOperation.GetCameraImageRequest> {
+    public GetCameraImageOperation() {
         super("jpeg");
     }
 

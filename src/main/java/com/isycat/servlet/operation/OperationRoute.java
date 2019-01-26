@@ -1,4 +1,4 @@
-package com.isycat.servlet.activity;
+package com.isycat.servlet.operation;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -6,21 +6,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class to define regex pathMatcher matcher to route to an activitySupplier.
+ * Class to define regex pathMatcher matcher to route to an operationHandlerSupplier.
  */
-public class ActivityRoute {
+public class OperationRoute {
     private static final String NAMED_REGEX_GROUP_REPLACEMENT = "(?<$1>.*)";
     private static final String REGEX_BRACKET_GROUP = "\\{([A-Za-z]+)\\}";
     private static final String REGEX_NAMED_GROUP = "\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>";
 
     private final String pathMatcher;
-    private final Supplier<AbstractServletActivity> activitySupplier;
+    private final Supplier<AbstractServletOperationHandler> operationHandlerSupplier;
     private final Set<String> groups;
 
-    public ActivityRoute(final String pathMatcher,
-                         final Supplier<AbstractServletActivity> activitySupplier) {
+    /**
+     * Constructor.
+     *
+     * @param pathMatcher regex string to match URI paths. Also handles {variableNameHere}
+     * @param operationHandlerSupplier a supplier to return instances of the routed operation
+     */
+    public OperationRoute(final String pathMatcher,
+                          final Supplier<AbstractServletOperationHandler> operationHandlerSupplier) {
         this.pathMatcher = pathMatcher.replaceAll(REGEX_BRACKET_GROUP, NAMED_REGEX_GROUP_REPLACEMENT);
-        this.activitySupplier = activitySupplier;
+        this.operationHandlerSupplier = operationHandlerSupplier;
         groups = new HashSet<>();
         final Matcher groupMatcher = Pattern.compile(REGEX_NAMED_GROUP)
                 .matcher(this.pathMatcher);
@@ -61,9 +67,9 @@ public class ActivityRoute {
     }
 
     /**
-     * @return the {@link AbstractServletActivity} handled by this route
+     * @return the {@link AbstractServletOperationHandler} handled by this route
      */
-    public AbstractServletActivity getNewActivity() {
-        return activitySupplier.get();
+    public AbstractServletOperationHandler getNewOperationHandler() {
+        return operationHandlerSupplier.get();
     }
 }

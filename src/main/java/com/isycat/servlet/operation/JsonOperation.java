@@ -1,4 +1,4 @@
-package com.isycat.servlet.activity;
+package com.isycat.servlet.operation;
 
 import com.google.gson.JsonPrimitive;
 import com.isycat.servlet.HttpConstants;
@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
-public abstract class JsonActivity<RequestType extends JsonRequest, ResponseType extends JsonResponse>
-        extends AbstractServletActivity<RequestType, ResponseType> {
+public abstract class JsonOperation<RequestType extends JsonRequest, ResponseType extends JsonResponse>
+        extends AbstractServletOperationHandler<RequestType, ResponseType> {
     private static final String APPLICATION_JSON_CONTENT_TYPE = "application/json";
     public static final JsonException SERVER_INTERNAL =
             new JsonException(500, "An internal error occurred.");

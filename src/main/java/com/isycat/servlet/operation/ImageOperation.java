@@ -1,4 +1,4 @@
-package com.isycat.servlet.activity;
+package com.isycat.servlet.operation;
 
 import com.isycat.servlet.json.JsonRequest;
 
@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 
-public abstract class ImageActivity<RequestType extends JsonRequest>
-        extends AbstractServletActivity<RequestType, RenderedImage> {
+public abstract class ImageOperation<RequestType extends JsonRequest>
+        extends AbstractServletOperationHandler<RequestType, RenderedImage> {
 
     private final String format;
 
-    public ImageActivity(final String format) {
+    public ImageOperation(final String format) {
         this.format = format;
     }
 
