@@ -5,7 +5,7 @@ import com.isycat.servlet.json.JsonActivity;
 import com.isycat.servlet.json.JsonRequest;
 import com.isycat.servlet.json.JsonResponse;
 
-public class GetCameraImageActivity extends JsonActivity {
+public class GetCameraImageActivity extends JsonActivity<JsonRequest, JsonResponse> {
     @Override
     public JsonResponse handle(final JsonRequest request) {
         return new JsonResponse(200)

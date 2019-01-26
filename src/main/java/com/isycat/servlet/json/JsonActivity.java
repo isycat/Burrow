@@ -4,42 +4,27 @@ import com.google.gson.JsonPrimitive;
 import com.isycat.servlet.HttpConstants;
 import com.isycat.servlet.ServletActivity;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
-public abstract class JsonActivity extends ServletActivity {
+public abstract class JsonActivity<RequestType extends JsonRequest, ResponseType extends JsonResponse>
+        extends ServletActivity<RequestType, ResponseType> {
     private static final String APPLICATION_JSON_CONTENT_TYPE = "application/json";
-    // todo: Proper DTO (& import babybelle gson wrapper)
-    private static final JsonException SERVER_INTERNAL =
+    public static final JsonException SERVER_INTERNAL =
             new JsonException(500, "An internal error occurred.");
 
     @Override
-    public final void handleRequest(final JsonRequest request,
-                                    final HttpServletResponse response,
-                                    final String requestId) throws IOException {
-        final JsonResponse jsonResponse = handleResponse(request)
+    public final Object getResponse(final String requestId,
+                                          final RequestType request,
+                                          final HttpServletRequest servletRequest,
+                                          final HttpServletResponse servletResponse) throws IOException {
+        servletResponse.setContentType(APPLICATION_JSON_CONTENT_TYPE);
+        final JsonResponse jsonResponse = this.handle(request)
                 .with(HttpConstants.Fields.REQUEST_ID, new JsonPrimitive(requestId));
-        response.setStatus((Integer) jsonResponse.get(HttpConstants.Fields.STATUS));
-        response.setContentType(APPLICATION_JSON_CONTENT_TYPE);
-        response.getWriter().println(jsonResponse);
+        Optional.ofNullable(jsonResponse.get(HttpConstants.Fields.STATUS))
+                .ifPresent(status -> servletResponse.setStatus((Integer) status));
+        return jsonResponse;
     }
-
-    private JsonResponse handleResponse(final JsonRequest request) {
-        try {
-            return this.handle(request);
-        } catch (final Exception e) {
-            // todo: proper logging
-            e.printStackTrace();
-            return SERVER_INTERNAL;
-        }
-    }
-
-    /**
-     * Override to implement your operation's functionality.
-     *
-     * @param request the request to be handled
-     * @return JsonResponse object to be returned to user
-     * @throws IOException usually on writing response
-     */
-    public abstract JsonResponse handle(final JsonRequest request) throws IOException;
 }
