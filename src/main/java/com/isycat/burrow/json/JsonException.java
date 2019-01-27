@@ -18,7 +18,7 @@ public class JsonException extends JsonResponse {
     /**
      * Constructor.
      *
-     * @param status http status code of the exception.
+     * @param status http status code of the error.
      * @param message error message (user facing)
      */
     public JsonException(final int status, final String message) {

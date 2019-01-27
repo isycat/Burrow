@@ -31,7 +31,7 @@ public abstract class Router extends HttpServlet {
             handleRequest(request, response);
         } catch (final Exception e) {
             // todo: proper logging
-            System.out.println("Handling unchecked exception");
+            System.out.println("Handling unchecked error");
             e.printStackTrace();
             try {
                 response.setStatus(500);
