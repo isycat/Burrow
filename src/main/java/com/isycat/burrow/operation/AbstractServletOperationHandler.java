@@ -43,7 +43,9 @@ public abstract class AbstractServletOperationHandler<RequestType extends JsonRe
     private RequestType createTypedRequest(final HttpServletRequest request)
             throws IllegalAccessException, InstantiationException {
         final RequestType typedRequest = createTypedRequest();
-        OperationContext.getPathFields().ifPresent(pathFields -> {
+        OperationContext.getPathFields()
+                .filter(fields -> !fields.isEmpty())
+                .ifPresent(pathFields -> {
             Logger.info("Injecting path fields: " + pathFields.toString());
             typedRequest.putAll(pathFields);
         });

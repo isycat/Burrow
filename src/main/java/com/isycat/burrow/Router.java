@@ -75,10 +75,8 @@ public abstract class Router extends HttpServlet {
 
     private AbstractServletOperationHandler routeOperation(final String path) {
         final Optional<OperationRoute> operationRoute = findRoute(path);
-        final Map<String, String> pathFields = operationRoute
-                .map(route -> route.getPathFields(path))
-                .orElse(Collections.emptyMap());
-        OperationContext.setPathFields(pathFields);
+        operationRoute.map(route -> route.getPathFields(path))
+                .ifPresent(OperationContext::setPathFields);
         final AbstractServletOperationHandler operationHandler = operationRoute
                 .map(OperationRoute::getNewOperationHandler)
                 .orElse(AbstractServletOperationHandler.NONE);
