@@ -1,14 +1,14 @@
 package com.isycat.burrow.operation;
 
-import java.util.HashMap;
+import com.isycat.burrow.Logger;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.isycat.burrow.HttpConstants.Fields.REQUEST_ID;
-
 public class OperationContext {
-    private static final ThreadLocal<Map<String, Object>> context = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String, String>> pathFields = new ThreadLocal<>();
+    private static final ThreadLocal<String> requestId = new ThreadLocal<>();
 
     /**
      * Get an ID for the request currently being handled
@@ -16,45 +16,33 @@ public class OperationContext {
      * @return the request ID
      */
     public static String getRequestId() {
-        return (String) get(REQUEST_ID)
+        return Optional.ofNullable(requestId.get())
                 .orElseGet(() -> {
-                    final String requestId = UUID.randomUUID().toString()
+                    final String newRequestId = UUID.randomUUID().toString()
                             .replace("-", "");
-                    set(REQUEST_ID, requestId);
-                    return requestId;
+                    requestId.set(newRequestId);
+                    return newRequestId;
                 });
     }
 
+    /**
+     * Get the path variables for the current request
+     * @return Map of key -> value path variables
+     */
     public static Optional<Map<String, String>> getPathFields() {
-        return get("pathFields")
-                .map(v -> (Map<String, String>) v);
+        return Optional.ofNullable(pathFields.get());
     }
 
-    public static void setPathFields(final Map<String, String> pathFields) {
-        set("pathFields", pathFields);
+    public static void setPathFields(final Map<String, String> newPathFields) {
+        pathFields.set(newPathFields);
     }
 
     /**
      * Used for protection against sequential thread reuse
      */
     public static void reset() {
-        context.set(null);
-    }
-
-    private static Map<String, Object> init() {
-        final Map<String, Object> newContext = new HashMap<>();
-        context.set(newContext);
-        return newContext;
-    }
-
-    private static Optional<Object> get(final String key) {
-        return Optional.ofNullable(context.get())
-                .map(ctx -> ctx.get(key));
-    }
-
-    private static void set(final String key, final Object value) {
-        Optional.ofNullable(context.get())
-                .orElse(init())
-                .put(key, value);
+        Logger.info("Resetting operation context");
+        pathFields.set(null);
+        requestId.set(null);
     }
 }

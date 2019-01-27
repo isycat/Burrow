@@ -67,9 +67,8 @@ public abstract class Router extends HttpServlet {
     }
 
     private void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final AbstractServletOperationHandler operationHandler =
-                routeOperation(request.getRequestURI());
-        operationHandler.handleRequest(request, response);
+        routeOperation(request.getRequestURI())
+                .handleRequest(request, response);
         response.addHeader(Headers.REQUEST_ID, OperationContext.getRequestId());
         response.addDateHeader(Headers.DATE, new Date().getTime());
     }

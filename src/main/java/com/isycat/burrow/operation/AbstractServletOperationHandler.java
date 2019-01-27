@@ -1,5 +1,6 @@
 package com.isycat.burrow.operation;
 
+import com.isycat.burrow.Logger;
 import com.isycat.burrow.error.ClientError;
 import com.isycat.burrow.json.JsonRequest;
 import com.isycat.burrow.json.JsonResponse;
@@ -42,8 +43,10 @@ public abstract class AbstractServletOperationHandler<RequestType extends JsonRe
     private RequestType createTypedRequest(final HttpServletRequest request)
             throws IllegalAccessException, InstantiationException {
         final RequestType typedRequest = createTypedRequest();
-        OperationContext.getPathFields()
-                .ifPresent(typedRequest::putAll);
+        OperationContext.getPathFields().ifPresent(pathFields -> {
+            Logger.info("Injecting path fields: " + pathFields.toString());
+            typedRequest.putAll(pathFields);
+        });
         final Map<String, String> headers = new HashMap<>();
         final Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {

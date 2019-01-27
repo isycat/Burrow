@@ -4,12 +4,34 @@ import com.isycat.burrow.operation.OperationContext;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.LogRecord;
 import java.util.stream.Stream;
 
 public class Logger {
+    private static final String LOGGER_FORMAT = "[%s][%s][%s] %s\n";
     private static final java.util.logging.Logger LOG =
             java.util.logging.Logger.getLogger(Logger.class.getName());
+    static {
+        LOG.setUseParentHandlers(false);
+        final ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new Formatter() {
+            @Override
+            public String format(final LogRecord record) {
+                return String.format(LOGGER_FORMAT,
+                        new SimpleDateFormat("kk:mm:ss").format(new Date()),
+                        OperationContext.getRequestId(),
+                        record.getLevel(),
+                        record.getMessage()
+                );
+            }
+        });
+        LOG.addHandler(handler);
+    }
 
     public static void warn(final String message) {
         processMessage(message).forEach(LOG::warning);
@@ -31,7 +53,6 @@ public class Logger {
     }
 
     private static Stream<String> processMessage(final String message) {
-        return Arrays.stream(message.split("\n"))
-                .map(m -> "[" + OperationContext.getRequestId() + "] " + m);
+        return Arrays.stream(message.split("\n"));
     }
 }
