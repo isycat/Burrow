@@ -37,7 +37,8 @@ public class OperationErrorTest {
         final ServerError error = new ServerError(
                 567,
                 "error.wrongness",
-                "something wronged okay");
+                "something wronged okay",
+                null);
         assertEquals("Error during serialization",
                 expectedString, error.toString());
     }

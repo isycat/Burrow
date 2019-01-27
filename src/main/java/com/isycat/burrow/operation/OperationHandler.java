@@ -21,7 +21,7 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
         @Override
         public JsonResponse handle(final JsonRequest request) {
             throw new ClientError(404,
-                    "client.nknownoperation",
+                    "client.unknownoperation",
                     "Unknown Operation");
         }
     };

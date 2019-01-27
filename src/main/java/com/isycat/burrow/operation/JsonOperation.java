@@ -1,7 +1,6 @@
 package com.isycat.burrow.operation;
 
 import com.isycat.burrow.HttpConstants;
-import com.isycat.burrow.error.ServerError;
 import com.isycat.burrow.json.JsonRequest;
 import com.isycat.burrow.json.JsonResponse;
 
@@ -13,10 +12,6 @@ import java.util.Optional;
 public abstract class JsonOperation<RequestType extends JsonRequest, ResponseType extends JsonResponse>
         extends OperationHandler<RequestType, ResponseType> {
     private static final String APPLICATION_JSON_CONTENT_TYPE = "application/json";
-    public static final ServerError SERVER_INTERNAL =
-            new ServerError(500,
-                    "server.internal",
-                    "An internal error occurred.");
 
     @Override
     public final ResponseType getResponse(final RequestType request,

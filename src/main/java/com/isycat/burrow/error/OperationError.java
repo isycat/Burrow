@@ -13,6 +13,14 @@ public abstract class OperationError extends RuntimeException {
     public OperationError(final int status,
                           final String errorCode,
                           final String errorMessage) {
+        this(status, errorCode, errorMessage, null);
+    }
+
+    public OperationError(final int status,
+                          final String errorCode,
+                          final String errorMessage,
+                          final Throwable cause) {
+        super(errorMessage, cause);
         this.status = status;
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;

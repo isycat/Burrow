@@ -1,6 +1,9 @@
 package com.isycat.burrow;
 
+import com.isycat.burrow.error.ClientError;
 import com.isycat.burrow.error.OperationError;
+import com.isycat.burrow.error.ServerError;
+import com.isycat.burrow.error.ServerInternalError;
 import com.isycat.burrow.operation.OperationContext;
 import com.isycat.burrow.operation.OperationHandler;
 
@@ -13,10 +16,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-import static com.isycat.burrow.operation.JsonOperation.SERVER_INTERNAL;
-
 public class BaseRequestHandler {
-
     public void handleRequestSafe(final Supplier<OperationHandler> operationHandlerSupplier,
                                   final HttpServletRequest request,
                                   final HttpServletResponse response) {
@@ -29,11 +29,14 @@ public class BaseRequestHandler {
                         operationHandler,
                         request,
                         response);
-            } catch (final OperationError operationError) {
-                handleErrorInternal(errorHandler.get(), operationError, response);
+            } catch (final ClientError clientError) {
+                handleErrorInternal(errorHandler.get(), clientError, response);
+            } catch (final ServerError serverError) {
+                Logger.error("Server error", serverError);
+                handleErrorInternal(errorHandler.get(), serverError, response);
             } catch (final Exception e) {
-                Logger.error("Handling unchecked error", e);
-                handleErrorInternal(errorHandler.get(), SERVER_INTERNAL, response);
+                Logger.error("Converting unchecked error", e);
+                handleErrorInternal(errorHandler.get(), new ServerInternalError(e), response);
             }
         } catch (final Exception e) {
             Logger.error("End of the line. Unhandled exception.", e);
@@ -47,7 +50,7 @@ public class BaseRequestHandler {
      * @param errorHandler the {@link ErrorHandler}
      * @param operationError error to be returned
      * @param response the {@link HttpServletResponse} object for the request
-     * @throws Exception
+     * @throws Exception pokémon
      */
     private void handleErrorInternal(@Nullable final ErrorHandler errorHandler,
                                      @Nonnull final OperationError operationError,
@@ -56,7 +59,7 @@ public class BaseRequestHandler {
         response.addHeader(HttpConstants.Headers.REQUEST_ID, OperationContext.getRequestId());
         response.addDateHeader(HttpConstants.Headers.DATE, new Date().getTime());
         if (Optional.ofNullable(errorHandler).isPresent()) {
-            errorHandler.handleError(SERVER_INTERNAL, response);
+            errorHandler.handleError(operationError, response);
         }
     }
 
