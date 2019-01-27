@@ -22,11 +22,10 @@ public abstract class AbstractServletOperationHandler<RequestType extends JsonRe
         }
     };
 
-    public final void handleRequest(final Map<String, String> pathFields,
-                              final HttpServletRequest servletRequest,
-                              final HttpServletResponse servletResponse)
+    public final void handleRequest(final HttpServletRequest servletRequest,
+                                    final HttpServletResponse servletResponse)
             throws Exception {
-        final RequestType typedRequest = processRequest(pathFields, servletRequest);
+        final RequestType typedRequest = createTypedRequest(servletRequest);
         writeResponse(
                 this.getResponse(
                         typedRequest,
@@ -40,11 +39,11 @@ public abstract class AbstractServletOperationHandler<RequestType extends JsonRe
         servletResponse.getWriter().println(response);
     }
 
-    private RequestType processRequest(final Map<String, String> pathFields,
-                                       final HttpServletRequest request)
+    private RequestType createTypedRequest(final HttpServletRequest request)
             throws IllegalAccessException, InstantiationException {
         final RequestType typedRequest = createTypedRequest();
-        pathFields.forEach(typedRequest::put);
+        OperationContext.getPathFields()
+                .ifPresent(typedRequest::putAll);
         final Map<String, String> headers = new HashMap<>();
         final Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
