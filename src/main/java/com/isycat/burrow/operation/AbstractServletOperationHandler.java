@@ -22,23 +22,21 @@ public abstract class AbstractServletOperationHandler<RequestType extends JsonRe
         }
     };
 
-    public void handleRequest(final String requestId,
-                              final Map<String, String> pathFields,
+    public final void handleRequest(final Map<String, String> pathFields,
                               final HttpServletRequest servletRequest,
                               final HttpServletResponse servletResponse)
-            throws IOException, InstantiationException, IllegalAccessException {
+            throws Exception {
         final RequestType typedRequest = processRequest(pathFields, servletRequest);
         writeResponse(
                 this.getResponse(
-                        requestId,
                         typedRequest,
                         servletRequest,
                         servletResponse),
                 servletResponse);
     }
 
-    protected void writeResponse(final Object response,
-                                 final HttpServletResponse servletResponse) throws IOException {
+    protected void writeResponse(final ResponseType response,
+                                 final HttpServletResponse servletResponse) throws Exception {
         servletResponse.getWriter().println(response);
     }
 
@@ -64,10 +62,9 @@ public abstract class AbstractServletOperationHandler<RequestType extends JsonRe
         return requestClass.newInstance();
     }
 
-    protected abstract Object getResponse(final String requestId,
-                                          final RequestType request,
+    protected abstract ResponseType getResponse(final RequestType request,
                                           final HttpServletRequest servletRequest,
-                                          final HttpServletResponse servletResponse) throws IOException;
+                                          final HttpServletResponse servletResponse) throws Exception;
 
     /**
      * Override to implement your operation's functionality.

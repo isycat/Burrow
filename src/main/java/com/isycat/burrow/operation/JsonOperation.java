@@ -1,6 +1,5 @@
 package com.isycat.burrow.operation;
 
-import com.google.gson.JsonPrimitive;
 import com.isycat.burrow.HttpConstants;
 import com.isycat.burrow.error.ServerError;
 import com.isycat.burrow.json.JsonRequest;
@@ -20,15 +19,14 @@ public abstract class JsonOperation<RequestType extends JsonRequest, ResponseTyp
                     "An internal error occurred.");
 
     @Override
-    public final Object getResponse(final String requestId,
-                                          final RequestType request,
-                                          final HttpServletRequest servletRequest,
-                                          final HttpServletResponse servletResponse) throws IOException {
+    public final ResponseType getResponse(final RequestType request,
+                                    final HttpServletRequest servletRequest,
+                                    final HttpServletResponse servletResponse) throws IOException {
         servletResponse.setContentType(APPLICATION_JSON_CONTENT_TYPE);
-        final JsonResponse jsonResponse = this.handle(request)
-                .with(HttpConstants.Fields.REQUEST_ID, new JsonPrimitive(requestId));
-        Optional.ofNullable(jsonResponse.get(HttpConstants.Fields.STATUS))
+        final ResponseType response = this.handle(request);
+        response.with(HttpConstants.Fields.REQUEST_ID, OperationContext.getRequestId());
+        Optional.ofNullable(response.get(HttpConstants.Fields.STATUS))
                 .ifPresent(status -> servletResponse.setStatus((Integer) status));
-        return jsonResponse;
+        return response;
     }
 }

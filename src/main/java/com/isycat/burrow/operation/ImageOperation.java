@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 
 public abstract class ImageOperation<RequestType extends JsonRequest>
         extends AbstractServletOperationHandler<RequestType, RenderedImage> {
@@ -18,22 +17,17 @@ public abstract class ImageOperation<RequestType extends JsonRequest>
     }
 
     @Override
-    public final Object getResponse(final String requestId,
-                                    final RequestType request,
-                                    final HttpServletRequest servletRequest,
-                                    final HttpServletResponse servletResponse) throws IOException {
+    public final RenderedImage getResponse(final RequestType request,
+                                           final HttpServletRequest servletRequest,
+                                           final HttpServletResponse servletResponse) throws Exception {
         servletResponse.setContentType("image/" + format);
         servletResponse.setStatus(200);
         return this.handle(request);
     }
 
     @Override
-    protected void writeResponse(final Object response,
-                                 final HttpServletResponse servletResponse) throws IOException {
-        if (response instanceof RenderedImage) {
-            ImageIO.write((RenderedImage) response, "jpeg", servletResponse.getOutputStream());
-        } else {
-            servletResponse.getOutputStream().println(response.toString());
-        }
+    protected void writeResponse(final RenderedImage response,
+                                 final HttpServletResponse servletResponse) throws Exception {
+        ImageIO.write(response, "jpeg", servletResponse.getOutputStream());
     }
 }
