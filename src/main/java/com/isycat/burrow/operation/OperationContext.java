@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class OperationContext {
+    private static final int REQUEST_ID_LENGTH = 12;
     private static final ThreadLocal<Map<String, String>> pathFields = new ThreadLocal<>();
     private static final ThreadLocal<String> requestId = new ThreadLocal<>();
 
@@ -19,7 +20,8 @@ public class OperationContext {
         return Optional.ofNullable(requestId.get())
                 .orElseGet(() -> {
                     final String newRequestId = UUID.randomUUID().toString()
-                            .replace("-", "");
+                            .replace("-", "")
+                            .substring(32 - REQUEST_ID_LENGTH);
                     requestId.set(newRequestId);
                     return newRequestId;
                 });
