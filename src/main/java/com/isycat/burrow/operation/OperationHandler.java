@@ -2,8 +2,8 @@ package com.isycat.burrow.operation;
 
 import com.isycat.burrow.ErrorHandler;
 import com.isycat.burrow.Logger;
-import com.isycat.burrow.error.ClientError;
 import com.isycat.burrow.error.OperationError;
+import com.isycat.burrow.error.UnknownOperationError;
 import com.isycat.burrow.json.JsonRequest;
 import com.isycat.burrow.json.JsonResponse;
 
@@ -20,9 +20,7 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
     public static OperationHandler NONE = new JsonOperation<JsonRequest, JsonResponse>() {
         @Override
         public JsonResponse handle(final JsonRequest request) {
-            throw new ClientError(404,
-                    "client.unknownoperation",
-                    "Unknown Operation");
+            throw new UnknownOperationError();
         }
     };
 
