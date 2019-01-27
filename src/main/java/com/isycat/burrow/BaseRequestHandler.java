@@ -1,5 +1,6 @@
 package com.isycat.burrow;
 
+import com.google.common.collect.ImmutableSet;
 import com.isycat.burrow.error.ClientError;
 import com.isycat.burrow.error.OperationError;
 import com.isycat.burrow.error.ServerError;
@@ -11,12 +12,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public class BaseRequestHandler {
+    private static final Set<String> IGNORED_EXCEPTIONS = ImmutableSet.of(
+            "org.apache.catalina.connector.ClientAbortException"
+    );
+
     public void handleRequestSafe(final Supplier<OperationHandler> operationHandlerSupplier,
                                   final HttpServletRequest request,
                                   final HttpServletResponse response) {
@@ -29,18 +36,33 @@ public class BaseRequestHandler {
                         operationHandler,
                         request,
                         response);
+            } catch (final IOException e) {
+                // there is no point trying to write anything after IO failure
+                throw e;
             } catch (final ClientError clientError) {
                 handleErrorInternal(errorHandler.get(), clientError, response);
             } catch (final ServerError serverError) {
                 Logger.error("Server error", serverError);
                 handleErrorInternal(errorHandler.get(), serverError, response);
             } catch (final Exception e) {
-                Logger.error("Converting unchecked error", e);
-                handleErrorInternal(errorHandler.get(), new ServerInternalError(e), response);
+                final String className = e.getClass().getName();
+                if (IGNORED_EXCEPTIONS.contains(className)) {
+                    Logger.warn("Ignored exception: " + e.getClass().getName());
+                } else {
+                    convertUncheckedException(errorHandler.get(), e, response);
+                }
             }
         } catch (final Exception e) {
-            Logger.error("End of the line. Unhandled exception.", e);
+            // This should be quiet
+            Logger.error("End of the line. Unhandled exception. " + e.getClass().getName(), e);
         }
+    }
+
+    private void convertUncheckedException(final ErrorHandler errorHandler,
+                                           final Exception exception,
+                                           final HttpServletResponse response) throws Exception {
+        Logger.error("Converting unchecked error " + exception.getClass().getName(), exception);
+        handleErrorInternal(errorHandler, new ServerInternalError(exception), response);
     }
 
     /**
