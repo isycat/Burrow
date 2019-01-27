@@ -86,5 +86,5 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
      * @return Generic ResponseType object to be returned to user
      * @throws IOException usually on writing response
      */
-    public abstract ResponseType handle(final RequestType request) throws IOException;
+    public abstract ResponseType handle(final RequestType request) throws OperationError;
 }
