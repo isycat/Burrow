@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.RenderedImage;
 
 public abstract class ImageOperation<RequestType extends JsonRequest>
-        extends AbstractServletOperationHandler<RequestType, RenderedImage> {
+        extends OperationHandler<RequestType, RenderedImage> {
 
     private final String format;
 

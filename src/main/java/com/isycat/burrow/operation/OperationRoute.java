@@ -14,7 +14,7 @@ public class OperationRoute {
     private static final String REGEX_NAMED_GROUP = "\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>";
 
     private final String pathMatcher;
-    private final Supplier<AbstractServletOperationHandler> operationHandlerSupplier;
+    private final Supplier<OperationHandler> operationHandlerSupplier;
     private final Set<String> groups;
 
     /**
@@ -24,7 +24,7 @@ public class OperationRoute {
      * @param operationHandlerSupplier a supplier to return instances of the routed operation
      */
     public OperationRoute(final String pathMatcher,
-                          final Supplier<AbstractServletOperationHandler> operationHandlerSupplier) {
+                          final Supplier<OperationHandler> operationHandlerSupplier) {
         this.pathMatcher = pathMatcher.replaceAll(REGEX_BRACKET_GROUP, NAMED_REGEX_GROUP_REPLACEMENT);
         this.operationHandlerSupplier = operationHandlerSupplier;
         groups = new HashSet<>();
@@ -67,9 +67,9 @@ public class OperationRoute {
     }
 
     /**
-     * @return the {@link AbstractServletOperationHandler} handled by this route
+     * @return the {@link OperationHandler} handled by this route
      */
-    public AbstractServletOperationHandler getNewOperationHandler() {
+    public OperationHandler getNewOperationHandler() {
         return operationHandlerSupplier.get();
     }
 }

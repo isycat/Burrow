@@ -1,8 +1,6 @@
 package com.isycat.burrow;
 
-import com.isycat.burrow.HttpConstants.Headers;
-import com.isycat.burrow.error.OperationError;
-import com.isycat.burrow.operation.AbstractServletOperationHandler;
+import com.isycat.burrow.operation.OperationHandler;
 import com.isycat.burrow.operation.OperationContext;
 import com.isycat.burrow.operation.OperationRoute;
 
@@ -10,11 +8,11 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-
-import static com.isycat.burrow.operation.JsonOperation.SERVER_INTERNAL;
+import java.util.Arrays;
+import java.util.Optional;
 
 public abstract class Router extends HttpServlet {
+    private final BaseRequestHandler requestHandler = new BaseRequestHandler();
     private final OperationRoute[] operationRoutes;
 
     /**
@@ -27,60 +25,31 @@ public abstract class Router extends HttpServlet {
         this.operationRoutes = operationRoutes;
     }
 
+    /**
+     * Entry point for requests.
+     *
+     * @param request the {@link HttpServletRequest} to be handled
+     * @param response the {@link HttpServletResponse} response object to be modified
+     */
     public final void doGet(final HttpServletRequest request, final HttpServletResponse response) {
-        // Force request ID generation
-        OperationContext.getRequestId();
-        try {
-            try {
-                handleRequest(request, response);
-            } catch (final OperationError operationError) {
-                handleErrorInternal(operationError, response);
-            } catch (final Exception e) {
-                Logger.error("Handling unchecked error", e);
-                handleErrorInternal(SERVER_INTERNAL, response);
-            }
-        } catch (final Exception e) {
-            Logger.error("End of the line. Unhandled exception.", e);
-        }
         // reset in case of bad thread reuse
         OperationContext.reset();
+        // Force request ID generation
+        OperationContext.getRequestId();
+        requestHandler.handleRequestSafe(
+                () -> routeOperation(request.getRequestURI()),
+                request,
+                response);
     }
 
-    private void handleErrorInternal(final OperationError operationError,
-                                     final HttpServletResponse response) throws Exception {
-        response.setStatus(operationError.getStatus());
-        response.addHeader(Headers.REQUEST_ID, OperationContext.getRequestId());
-        response.addDateHeader(Headers.DATE, new Date().getTime());
-        handleError(operationError, response);
-    }
-
-    /**
-     * Controls how errors are converted into responses.
-     *
-     * @param operationError the error to be handled
-     * @param response the servlet response
-     * @throws Exception pokémon
-     */
-    protected void handleError(final OperationError operationError,
-                               final HttpServletResponse response) throws Exception {
-        response.getWriter().println(operationError);
-    }
-
-    private void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        routeOperation(request.getRequestURI())
-                .handleRequest(request, response);
-        response.addHeader(Headers.REQUEST_ID, OperationContext.getRequestId());
-        response.addDateHeader(Headers.DATE, new Date().getTime());
-    }
-
-    private AbstractServletOperationHandler routeOperation(final String path) {
+    private OperationHandler routeOperation(final String path) {
         final Optional<OperationRoute> operationRoute = findRoute(path);
         operationRoute.map(route -> route.getPathFields(path))
                 .ifPresent(OperationContext::setPathFields);
-        final AbstractServletOperationHandler operationHandler = operationRoute
+        final OperationHandler operationHandler = operationRoute
                 .map(OperationRoute::getNewOperationHandler)
-                .orElse(AbstractServletOperationHandler.NONE);
-        Logger.info(operationHandler == AbstractServletOperationHandler.NONE
+                .orElse(OperationHandler.NONE);
+        Logger.info(operationHandler == OperationHandler.NONE
                 ? "No operation handler for path " + path
                 : "Operation handler: " + operationHandler.getClass().getName());
         return operationHandler;

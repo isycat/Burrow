@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public abstract class JsonOperation<RequestType extends JsonRequest, ResponseType extends JsonResponse>
-        extends AbstractServletOperationHandler<RequestType, ResponseType> {
+        extends OperationHandler<RequestType, ResponseType> {
     private static final String APPLICATION_JSON_CONTENT_TYPE = "application/json";
     public static final ServerError SERVER_INTERNAL =
             new ServerError(500,

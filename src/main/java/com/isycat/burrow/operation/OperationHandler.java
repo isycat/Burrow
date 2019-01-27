@@ -1,7 +1,9 @@
 package com.isycat.burrow.operation;
 
+import com.isycat.burrow.ErrorHandler;
 import com.isycat.burrow.Logger;
 import com.isycat.burrow.error.ClientError;
+import com.isycat.burrow.error.OperationError;
 import com.isycat.burrow.json.JsonRequest;
 import com.isycat.burrow.json.JsonResponse;
 
@@ -13,8 +15,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractServletOperationHandler<RequestType extends JsonRequest, ResponseType> {
-    public static AbstractServletOperationHandler NONE = new JsonOperation<JsonRequest, JsonResponse>() {
+public abstract class OperationHandler<RequestType extends JsonRequest, ResponseType>
+        implements ErrorHandler {
+    public static OperationHandler NONE = new JsonOperation<JsonRequest, JsonResponse>() {
         @Override
         public JsonResponse handle(final JsonRequest request) {
             throw new ClientError(404,
@@ -33,6 +36,12 @@ public abstract class AbstractServletOperationHandler<RequestType extends JsonRe
                         servletRequest,
                         servletResponse),
                 servletResponse);
+    }
+
+    @Override
+    public void handleError(final OperationError operationError,
+                                  final HttpServletResponse response) throws Exception {
+        ErrorHandler.DEFAULT.handleError(operationError, response);
     }
 
     protected void writeResponse(final ResponseType response,
