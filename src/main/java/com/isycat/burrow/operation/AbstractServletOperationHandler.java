@@ -1,6 +1,6 @@
 package com.isycat.burrow.operation;
 
-import com.isycat.burrow.json.JsonException;
+import com.isycat.burrow.error.ClientError;
 import com.isycat.burrow.json.JsonRequest;
 import com.isycat.burrow.json.JsonResponse;
 
@@ -16,7 +16,9 @@ public abstract class AbstractServletOperationHandler<RequestType extends JsonRe
     public static AbstractServletOperationHandler NONE = new JsonOperation<JsonRequest, JsonResponse>() {
         @Override
         public JsonResponse handle(final JsonRequest request) {
-            return new JsonException(404, "Unknown Operation");
+            throw new ClientError(404,
+                    "client.nknownoperation",
+                    "Unknown Operation");
         }
     };
 
