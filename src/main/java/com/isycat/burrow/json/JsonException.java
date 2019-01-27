@@ -1,6 +1,6 @@
-package com.isycat.servlet.json;
+package com.isycat.burrow.json;
 
-import com.isycat.servlet.HttpConstants;
+import com.isycat.burrow.HttpConstants;
 
 public class JsonException extends JsonResponse {
 

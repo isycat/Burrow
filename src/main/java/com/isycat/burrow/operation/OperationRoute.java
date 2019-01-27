@@ -1,4 +1,4 @@
-package com.isycat.servlet.operation;
+package com.isycat.burrow.operation;
 
 import java.util.*;
 import java.util.function.Supplier;

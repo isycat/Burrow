@@ -1,6 +1,6 @@
-package com.isycat.servlet.operation;
+package com.isycat.burrow.operation;
 
-import com.isycat.servlet.json.JsonRequest;
+import com.isycat.burrow.json.JsonRequest;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;

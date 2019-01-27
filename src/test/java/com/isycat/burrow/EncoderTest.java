@@ -1,4 +1,4 @@
-package com.isycat.servlet;
+package com.isycat.burrow;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;

@@ -1,8 +1,8 @@
-package com.isycat.servlet;
+package com.isycat.burrow;
 
-import com.isycat.servlet.HttpConstants.Headers;
-import com.isycat.servlet.operation.AbstractServletOperationHandler;
-import com.isycat.servlet.operation.OperationRoute;
+import com.isycat.burrow.HttpConstants.Headers;
+import com.isycat.burrow.operation.AbstractServletOperationHandler;
+import com.isycat.burrow.operation.OperationRoute;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServlet;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-import static com.isycat.servlet.operation.JsonOperation.SERVER_INTERNAL;
+import static com.isycat.burrow.operation.JsonOperation.SERVER_INTERNAL;
 
 public abstract class Router extends HttpServlet {
     private final OperationRoute[] operationRoutes;

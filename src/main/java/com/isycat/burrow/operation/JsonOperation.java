@@ -1,10 +1,10 @@
-package com.isycat.servlet.operation;
+package com.isycat.burrow.operation;
 
 import com.google.gson.JsonPrimitive;
-import com.isycat.servlet.HttpConstants;
-import com.isycat.servlet.json.JsonException;
-import com.isycat.servlet.json.JsonRequest;
-import com.isycat.servlet.json.JsonResponse;
+import com.isycat.burrow.HttpConstants;
+import com.isycat.burrow.json.JsonException;
+import com.isycat.burrow.json.JsonRequest;
+import com.isycat.burrow.json.JsonResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

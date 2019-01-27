@@ -3,10 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>isycat</groupId>
-    <artifactId>RekogTest</artifactId>
+    <groupId>com.isycat</groupId>
+    <artifactId>Burrow</artifactId>
     <version>0.1</version>
-    <packaging>war</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -18,21 +17,6 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
-                </configuration>
-            </plugin>
-            <!-- Config: Maven Tomcat Plugin -->
-            <!-- http://mvnrepository.com/artifact/org.apache.tomcat.maven/tomcat7-maven-plugin -->
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <path>/</path>
-                    <port>8888</port>
-                    <aliases>
-                        <Alias>0.0.0.0</Alias>
-                    </aliases>
-                    <server>RekogServer</server>
                 </configuration>
             </plugin>
         </plugins>

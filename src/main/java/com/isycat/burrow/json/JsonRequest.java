@@ -1,4 +1,4 @@
-package com.isycat.servlet.json;
+package com.isycat.burrow.json;
 
 import com.google.gson.Gson;
 

@@ -1,7 +1,7 @@
-package com.isycat.servlet.json;
+package com.isycat.burrow.json;
 
 import com.google.gson.Gson;
-import com.isycat.servlet.HttpConstants;
+import com.isycat.burrow.HttpConstants;
 
 import java.util.LinkedHashMap;
 

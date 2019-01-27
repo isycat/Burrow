@@ -1,4 +1,4 @@
-package com.isycat.servlet;
+package com.isycat.burrow;
 
 public class ServerError extends RuntimeException {
     private final int status;

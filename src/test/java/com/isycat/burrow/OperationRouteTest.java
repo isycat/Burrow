@@ -1,8 +1,8 @@
-package com.isycat.servlet;
+package com.isycat.burrow;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.isycat.servlet.operation.OperationRoute;
+import com.isycat.burrow.operation.OperationRoute;
 import org.junit.Test;
 
 import java.util.Map;

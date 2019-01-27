@@ -1,4 +1,4 @@
-package com.isycat.servlet;
+package com.isycat.burrow;
 
 public class HttpConstants {
     public static class Fields {
