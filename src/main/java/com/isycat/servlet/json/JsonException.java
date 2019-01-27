@@ -2,7 +2,7 @@ package com.isycat.servlet.json;
 
 import com.isycat.servlet.HttpConstants;
 
-public class JsonException extends JsonResponse{
+public class JsonException extends JsonResponse {
 
     /**
      * Constructor.
