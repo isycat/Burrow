@@ -1,38 +1,19 @@
 package com.isycat.burrow.json;
 
-import com.google.gson.Gson;
-import com.isycat.burrow.HttpConstants;
+import com.isycat.burrow.error.Structure;
 
-import java.util.LinkedHashMap;
-
-public class JsonResponse extends LinkedHashMap<String, Object> {
-    private static Gson GSON = new Gson();
+public class JsonResponse extends Structure {
+    private final int status;
 
     public JsonResponse() {
-        this.with(HttpConstants.Fields.STATUS, 200);
+        this.status = 200;
     }
 
     public JsonResponse(final int status) {
-        this.with(HttpConstants.Fields.STATUS, status);
+        this.status = status;
     }
 
-
-    /**
-     * Associates the specified value with the specified key in this
-     * response object.
-     * If the map previously contained a mapping for the key, the old
-     * value is replaced.
-     *
-     * @param key key with which the specified value is to be associated
-     * @param value value to be associated with the specified key
-     * @return this
-     */
-    public JsonResponse with(String key, Object value) {
-        this.put(key, value);
-        return this;
-    }
-
-    public String toString() {
-        return GSON.toJson(this);
+    public int getStatus() {
+        return status;
     }
 }

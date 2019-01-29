@@ -20,8 +20,8 @@ public abstract class JsonOperation<RequestType extends JsonRequest, ResponseTyp
         servletResponse.setContentType(APPLICATION_JSON_CONTENT_TYPE);
         final ResponseType response = this.handle(request);
         response.with(HttpConstants.Fields.REQUEST_ID, OperationContext.getRequestId());
-        Optional.ofNullable(response.get(HttpConstants.Fields.STATUS))
-                .ifPresent(status -> servletResponse.setStatus((Integer) status));
+        Optional.of(response.getStatus())
+                .ifPresent(servletResponse::setStatus);
         return response;
     }
 }

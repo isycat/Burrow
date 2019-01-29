@@ -54,7 +54,7 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
                 .filter(fields -> !fields.isEmpty())
                 .ifPresent(pathFields -> {
             Logger.info("Injecting path fields: " + pathFields.toString());
-            typedRequest.putAll(pathFields);
+            pathFields.forEach(typedRequest::with);
         });
         final Map<String, String> headers = new HashMap<>();
         final Enumeration headerNames = request.getHeaderNames();
