@@ -1,5 +1,6 @@
 package com.isycat.burrow.operation;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.isycat.burrow.ErrorHandler;
 import com.isycat.burrow.Logger;
 import com.isycat.burrow.error.OperationError;
@@ -28,10 +29,9 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
     public final void handleRequest(final HttpServletRequest servletRequest,
                                     final HttpServletResponse servletResponse)
             throws Exception {
-        final RequestType typedRequest = createTypedRequest(servletRequest);
         writeResponse(
                 this.getResponse(
-                        typedRequest,
+                        createTypedRequest(servletRequest),
                         servletRequest,
                         servletResponse),
                 servletResponse);
@@ -48,26 +48,24 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
         servletResponse.getWriter().println(response);
     }
 
-    private RequestType createTypedRequest(final HttpServletRequest request)
-            throws IllegalAccessException, InstantiationException {
-        final RequestType typedRequest = OperationContext.getPathFields()
-                .filter(fields -> !fields.isEmpty())
-                .map(pathFields -> {
-//                    pathFields.forEach(typedRequest::with);
-                    Logger.info("Injecting path fields: " + pathFields.toString());
-                    return StrictSerializer.deserialize(
-                            StrictSerializer.serialize(pathFields),
-                            getRequestClass());
-                })
-                .orElse(getRequestClass().newInstance());
+    private RequestType createTypedRequest(final HttpServletRequest request) {
+        final Map<String, Object> requestMap = new LinkedTreeMap<>();
+        requestMap.putAll(OperationContext.getPathFields().orElse(new HashMap<>()));
+        requestMap.put("headers", getRequestHeaders(request));
+        final RequestType typedRequest = StrictSerializer.deserialize(
+                StrictSerializer.serialize(requestMap), getRequestClass());
+        Logger.info("Request generated: " + typedRequest);
+        return typedRequest;
+    }
+
+    private Map<String, String> getRequestHeaders(final HttpServletRequest request) {
         final Map<String, String> headers = new HashMap<>();
         final Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             final String headerName = headerNames.nextElement().toString();
             headers.put(headerName, request.getHeader(headerName));
         }
-        typedRequest.with("headers", headers);
-        return typedRequest;
+        return headers;
     }
 
     private Class<RequestType> getRequestClass() {
@@ -78,8 +76,8 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
     }
 
     protected abstract ResponseType getResponse(final RequestType request,
-                                          final HttpServletRequest servletRequest,
-                                          final HttpServletResponse servletResponse) throws Exception;
+                                                final HttpServletRequest servletRequest,
+                                                final HttpServletResponse servletResponse) throws Exception;
 
     /**
      * Override to implement your operation's functionality.
