@@ -6,6 +6,7 @@ import com.isycat.burrow.error.OperationError;
 import com.isycat.burrow.error.UnknownOperationError;
 import com.isycat.burrow.json.JsonRequest;
 import com.isycat.burrow.json.JsonResponse;
+import com.isycat.burrow.serialization.StrictSerializer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,13 +50,16 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
 
     private RequestType createTypedRequest(final HttpServletRequest request)
             throws IllegalAccessException, InstantiationException {
-        final RequestType typedRequest = createTypedRequest();
-        OperationContext.getPathFields()
+        final RequestType typedRequest = OperationContext.getPathFields()
                 .filter(fields -> !fields.isEmpty())
-                .ifPresent(pathFields -> {
-            Logger.info("Injecting path fields: " + pathFields.toString());
-            pathFields.forEach(typedRequest::with);
-        });
+                .map(pathFields -> {
+//                    pathFields.forEach(typedRequest::with);
+                    Logger.info("Injecting path fields: " + pathFields.toString());
+                    return StrictSerializer.deserialize(
+                            StrictSerializer.serialize(pathFields),
+                            getRequestClass());
+                })
+                .orElse(getRequestClass().newInstance());
         final Map<String, String> headers = new HashMap<>();
         final Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
@@ -66,11 +70,11 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
         return typedRequest;
     }
 
-    private RequestType createTypedRequest() throws IllegalAccessException, InstantiationException {
+    private Class<RequestType> getRequestClass() {
         // This genuinely is necessary to provide generic type passthrough >_<.
-        final ParameterizedType parameterizedType = (ParameterizedType) this.getClass().getGenericSuperclass();
-        final Class<RequestType> requestClass = (Class<RequestType>) parameterizedType.getActualTypeArguments()[0];
-        return requestClass.newInstance();
+        final ParameterizedType parameterizedType =
+                (ParameterizedType) this.getClass().getGenericSuperclass();
+        return (Class<RequestType>) parameterizedType.getActualTypeArguments()[0];
     }
 
     protected abstract ResponseType getResponse(final RequestType request,
