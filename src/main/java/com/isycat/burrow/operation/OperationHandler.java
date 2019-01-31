@@ -4,6 +4,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.isycat.burrow.ErrorHandler;
 import com.isycat.burrow.Logger;
 import com.isycat.burrow.error.OperationError;
+import com.isycat.burrow.error.ServerInternalError;
 import com.isycat.burrow.error.UnknownOperationError;
 import com.isycat.burrow.json.JsonRequest;
 import com.isycat.burrow.json.JsonResponse;
@@ -16,6 +17,11 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 public abstract class OperationHandler<RequestType extends JsonRequest, ResponseType>
         implements ErrorHandler {
@@ -25,6 +31,8 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
             throw new UnknownOperationError();
         }
     };
+
+    private final ExecutorService executor = Executors.newFixedThreadPool(10);
 
     public final void handleRequest(final HttpServletRequest servletRequest,
                                     final HttpServletResponse servletResponse)
@@ -46,6 +54,21 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
     protected void writeResponse(final ResponseType response,
                                  final HttpServletResponse servletResponse) throws Exception {
         servletResponse.getWriter().println(response);
+    }
+
+    protected <T> Supplier<T> defer(final Callable<T> task) {
+        final Future<T> future = executor.submit(task);
+        return () -> {
+            try {
+                return future.get();
+            } catch (final Exception e) {
+                throw new ServerInternalError(e);
+            }
+        };
+    }
+
+    protected Future defer(final Runnable task) {
+        return executor.submit(task);
     }
 
     private RequestType createTypedRequest(final HttpServletRequest request) {
