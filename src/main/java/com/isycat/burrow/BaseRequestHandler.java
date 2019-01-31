@@ -45,8 +45,7 @@ public class BaseRequestHandler {
                 Logger.error("Server error", serverError);
                 handleErrorInternal(errorHandler.get(), serverError, response);
             } catch (final Exception e) {
-                final String className = e.getClass().getName();
-                if (IGNORED_EXCEPTIONS.contains(className)) {
+                if (IGNORED_EXCEPTIONS.contains(e.getClass().getName())) {
                     Logger.warn("Ignored exception: " + e.getClass().getName());
                 } else {
                     convertUncheckedException(errorHandler.get(), e, response);
@@ -54,7 +53,11 @@ public class BaseRequestHandler {
             }
         } catch (final Exception e) {
             // This should be quiet
-            Logger.error("End of the line. Unhandled exception. " + e.getClass().getName(), e);
+            if (IGNORED_EXCEPTIONS.contains(e.getClass().getName())) {
+                Logger.warn("Ignored exception: " + e.getClass().getName());
+            } else {
+                Logger.error("End of the line. Unhandled exception. " + e.getClass().getName(), e);
+            }
         }
     }
 
