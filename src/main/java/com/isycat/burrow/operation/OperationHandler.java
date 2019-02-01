@@ -56,7 +56,7 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
         servletResponse.getWriter().println(response);
     }
 
-    protected <T> Supplier<T> defer(final Callable<T> task) {
+    public <T> Supplier<T> defer(final Callable<T> task) {
         final Future<T> future = executor.submit(task);
         return () -> {
             try {
@@ -67,7 +67,7 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
         };
     }
 
-    protected Future defer(final Runnable task) {
+    public Future defer(final Runnable task) {
         return executor.submit(task);
     }
 
