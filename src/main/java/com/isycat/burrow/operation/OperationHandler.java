@@ -33,10 +33,12 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
     };
 
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
+    private final Map<String, String> headers = new HashMap<>();
 
     public final void handleRequest(final HttpServletRequest servletRequest,
                                     final HttpServletResponse servletResponse)
             throws Exception {
+        headers.forEach(servletResponse::setHeader);
         writeResponse(
                 this.getResponse(
                         createTypedRequest(servletRequest),
@@ -56,18 +58,11 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
         servletResponse.getWriter().println(response);
     }
 
-    public <T> Supplier<T> defer(final Callable<T> task) {
-        final Future<T> future = executor.submit(task);
-        return () -> {
-            try {
-                return future.get();
-            } catch (final Exception e) {
-                throw new ServerInternalError(e);
-            }
-        };
+    public <T> Supplier<T> runParallel(final Callable<T> task) {
+        return runParallel(task, executor);
     }
 
-    public Future defer(final Runnable task) {
+    public Future runParallel(final Runnable task) {
         return executor.submit(task);
     }
 
@@ -79,6 +74,10 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
                 StrictSerializer.serialize(requestMap), getRequestClass());
         Logger.info("Request generated: " + typedRequest);
         return typedRequest;
+    }
+
+    protected void setResponseHeader(final String header, final String value) {
+        this.headers.put(header, value);
     }
 
     private Map<String, String> getRequestHeaders(final HttpServletRequest request) {
@@ -110,4 +109,15 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
      * @throws IOException usually on writing response
      */
     public abstract ResponseType handle(final RequestType request) throws OperationError;
+
+    public static <T> Supplier<T> runParallel(final Callable<T> task, final ExecutorService executor) {
+        final Future<T> future = executor.submit(task);
+        return () -> {
+            try {
+                return future.get();
+            } catch (final Exception e) {
+                throw new ServerInternalError(e);
+            }
+        };
+    }
 }
