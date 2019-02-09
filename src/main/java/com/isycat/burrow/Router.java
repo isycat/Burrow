@@ -42,7 +42,7 @@ public abstract class Router extends HttpServlet {
                 response);
     }
 
-    private OperationHandler routeOperation(final String path) {
+    protected OperationHandler routeOperation(final String path) {
         final Optional<OperationRoute> operationRoute = findRoute(path);
         operationRoute.map(route -> route.getPathFields(path))
                 .ifPresent(OperationContext::setPathFields);

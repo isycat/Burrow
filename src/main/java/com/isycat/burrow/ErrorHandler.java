@@ -11,5 +11,5 @@ public interface ErrorHandler {
         httpResponse.getWriter().println(operationError);
     };
 
-    void handleError(final OperationError one, final HttpServletResponse two) throws Exception;
+    void handleError(final OperationError error, final HttpServletResponse response) throws Exception;
 }

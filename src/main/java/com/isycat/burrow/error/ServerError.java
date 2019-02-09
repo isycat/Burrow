@@ -2,13 +2,13 @@ package com.isycat.burrow.error;
 
 public class ServerError extends OperationError {
     public ServerError(final String errorMessage) {
-        super(400, "server.generic", errorMessage);
+        super(500, "server.generic", errorMessage);
     }
 
     public ServerError(final String errorCode,
                        final String errorMessage,
                        final Throwable cause) {
-        this(400, errorCode, errorMessage, cause);
+        this(500, errorCode, errorMessage, cause);
     }
 
     public ServerError(final int status,
