@@ -42,6 +42,16 @@ public abstract class Router extends HttpServlet {
                 response);
     }
 
+    /**
+     * Entry point for requests.
+     *
+     * @param request the {@link HttpServletRequest} to be handled
+     * @param response the {@link HttpServletResponse} response object to be modified
+     */
+    public final void doPost(final HttpServletRequest request, final HttpServletResponse response) {
+        this.doGet(request, response);
+    }
+
     protected OperationHandler routeOperation(final String path) {
         final Optional<OperationRoute> operationRoute = findRoute(path);
         operationRoute.map(route -> route.getPathFields(path))

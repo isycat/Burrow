@@ -2,7 +2,6 @@ package com.isycat.burrow.operation;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.isycat.burrow.ErrorHandler;
-import com.isycat.burrow.Logger;
 import com.isycat.burrow.error.OperationError;
 import com.isycat.burrow.error.ServerInternalError;
 import com.isycat.burrow.error.UnknownOperationError;
@@ -16,12 +15,15 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class OperationHandler<RequestType extends JsonRequest, ResponseType>
         implements ErrorHandler {
@@ -70,10 +72,19 @@ public abstract class OperationHandler<RequestType extends JsonRequest, Response
         final Map<String, Object> requestMap = new LinkedTreeMap<>();
         requestMap.putAll(OperationContext.getPathFields().orElse(new HashMap<>()));
         requestMap.put("headers", getRequestHeaders(request));
-        final RequestType typedRequest = StrictSerializer.deserialize(
+        try {
+            if (request.getInputStream() != null) {
+                final String dataString = new String(
+                        request.getInputStream().readAllBytes(),
+                        UTF_8);
+                final Map data = StrictSerializer.deserialize(dataString, LinkedHashMap.class);
+                data.forEach((k, v) -> requestMap.put((String) k, v));
+            }
+        } catch (final IOException e) {
+            // there is no request data
+        }
+        return StrictSerializer.deserialize(
                 StrictSerializer.serialize(requestMap), getRequestClass());
-        Logger.info("Request generated: " + typedRequest);
-        return typedRequest;
     }
 
     protected void setResponseHeader(final String header, final String value) {
